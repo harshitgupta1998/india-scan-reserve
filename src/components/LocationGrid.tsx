@@ -133,7 +133,7 @@ const LocationGrid = () => {
               <SelectValue placeholder="All cities" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">All cities</SelectItem>
+              <SelectItem value="all-cities">All cities</SelectItem>
               {cities.map(city => (
                 <SelectItem key={city} value={city}>{city}</SelectItem>
               ))}
@@ -147,7 +147,7 @@ const LocationGrid = () => {
               <SelectValue placeholder="Default" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Default</SelectItem>
+              <SelectItem value="default">Default</SelectItem>
               <SelectItem value="lowToHigh">Low to High</SelectItem>
               <SelectItem value="highToLow">High to Low</SelectItem>
             </SelectContent>
