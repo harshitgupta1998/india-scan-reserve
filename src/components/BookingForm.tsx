@@ -1,17 +1,8 @@
-
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 import { useNavigate, useParams } from "react-router-dom";
@@ -55,7 +46,6 @@ const BookingForm = () => {
   });
   
   useEffect(() => {
-    // In a real app, this would be an API call
     const foundLocation = locationsData.find(loc => loc.id === locationId) || null;
     setLocation(foundLocation);
   }, [locationId]);
@@ -79,15 +69,16 @@ const BookingForm = () => {
 
     toast.success("Appointment details saved!");
     
-    // Navigate directly to confirmation instead of payment
-    navigate(`/confirmation`, { 
-      state: { 
+    const bookingReference = `USC-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
+    
+    navigate("/confirmation", {
+      state: {
         formData,
         appointmentDate: date,
         appointmentTime: timeSlot,
         scanLocation: location,
-        bookingReference: `USC-${Math.random().toString(36).substring(2, 10).toUpperCase()}`
-      } 
+        bookingReference
+      }
     });
   };
 
