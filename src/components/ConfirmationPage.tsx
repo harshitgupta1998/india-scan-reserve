@@ -1,4 +1,3 @@
-
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -10,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { format } from "date-fns";
-import { CalendarIcon, CheckCircleIcon, MapPinIcon, FilePdfIcon } from "lucide-react";
+import { CalendarIcon, CheckCircleIcon, MapPinIcon, FileIcon } from "lucide-react";
 import { LocationCardProps } from "./LocationCard";
 import { jsPDF } from "jspdf";
 
@@ -26,7 +25,6 @@ const ConfirmationPage = () => {
     bookingReference
   } = location.state || {};
   
-  // If there's no booking reference, redirect back to the home page
   if (!bookingReference) {
     navigate("/");
     return null;
@@ -35,12 +33,10 @@ const ConfirmationPage = () => {
   const generatePDF = () => {
     const doc = new jsPDF();
     
-    // Add logo or header
     doc.setFontSize(20);
     doc.setTextColor(0, 0, 255);
     doc.text("Universal Scan", 105, 15, { align: "center" });
     
-    // Add booking details
     doc.setFontSize(16);
     doc.setTextColor(0, 0, 0);
     doc.text("Booking Confirmation", 105, 30, { align: "center" });
@@ -50,7 +46,6 @@ const ConfirmationPage = () => {
     doc.text(`Date: ${format(new Date(appointmentDate), "MMMM d, yyyy")}`, 20, 55);
     doc.text(`Time: ${appointmentTime}`, 20, 65);
     
-    // Patient details
     doc.text("Patient Details:", 20, 80);
     doc.text(`Name: ${formData.firstName} ${formData.lastName}`, 20, 90);
     doc.text(`Email: ${formData.email}`, 20, 100);
@@ -58,13 +53,11 @@ const ConfirmationPage = () => {
     doc.text(`Age: ${formData.age}`, 20, 120);
     doc.text(`Gender: ${formData.gender}`, 20, 130);
     
-    // Location details
     doc.text("Scan Center Details:", 20, 145);
     doc.text(`Center: ${scanLocation.name}`, 20, 155);
     doc.text(`Address: ${scanLocation.address}`, 20, 165);
     doc.text(`City: ${scanLocation.city}`, 20, 175);
     
-    // Important instructions
     doc.setFontSize(11);
     doc.text("Important Instructions:", 20, 195);
     doc.text("1. Please arrive 15 minutes before your appointment time", 25, 205);
@@ -72,7 +65,6 @@ const ConfirmationPage = () => {
     doc.text("3. Follow pre-scan instructions sent to your email", 25, 225);
     doc.text("4. For rescheduling, call: 1800-123-4567", 25, 235);
     
-    // Save PDF
     doc.save(`universal-scan-booking-${bookingReference}.pdf`);
   };
   
@@ -102,7 +94,7 @@ const ConfirmationPage = () => {
               onClick={generatePDF}
               className="flex items-center gap-2"
             >
-              <FilePdfIcon className="h-4 w-4" />
+              <FileIcon className="h-4 w-4" />
               Download PDF
             </Button>
           </div>
