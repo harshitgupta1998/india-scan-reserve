@@ -1,23 +1,49 @@
 
 import Navbar from "@/components/Navbar";
-import Hero from "@/components/Hero";
 import LocationGrid from "@/components/LocationGrid";
 
-const Index = () => {
+const Locations = () => {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <Hero />
       
-      <div className="container mx-auto px-4 py-12">
-        <div className="mb-8">
-          <h2 className="text-3xl font-bold mb-2">Find PET Scan Centers Near You</h2>
+      <div className="bg-blue-50 py-8">
+        <div className="container mx-auto px-4">
+          <h1 className="text-3xl font-bold mb-2">PET Scan Centers Across India</h1>
           <p className="text-gray-600">
-            Browse and book appointments at top-rated PET scan centers across India
+            Find and book appointments at top-rated medical centers in your city
           </p>
         </div>
-        
+      </div>
+      
+      <div className="container mx-auto px-4 py-8">
         <LocationGrid />
+      </div>
+      
+      <div className="container mx-auto px-4 py-8 mt-4">
+        <div className="bg-gray-50 rounded-lg p-6">
+          <h2 className="text-xl font-semibold mb-4">What to Look for in a PET Scan Center</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div>
+              <h3 className="font-medium mb-2">Advanced Technology</h3>
+              <p className="text-gray-600 text-sm">
+                Look for centers with the latest PET-CT technology for the highest quality images and most accurate results.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-medium mb-2">Expert Radiologists</h3>
+              <p className="text-gray-600 text-sm">
+                Centers with board-certified radiologists specialized in nuclear medicine provide the most reliable interpretations.
+              </p>
+            </div>
+            <div>
+              <h3 className="font-medium mb-2">Comfortable Facilities</h3>
+              <p className="text-gray-600 text-sm">
+                Choose centers that prioritize patient comfort with private waiting areas and a supportive environment.
+              </p>
+            </div>
+          </div>
+        </div>
       </div>
       
       <footer className="bg-gray-50 mt-auto">
@@ -73,4 +99,4 @@ const Index = () => {
   );
 };
 
-export default Index;
+export default Locations;
