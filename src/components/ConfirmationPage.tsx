@@ -10,8 +10,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { format } from "date-fns";
-import { CalendarIcon, CheckCircleIcon, MapPinIcon, PrinterIcon } from "lucide-react";
+import { CalendarIcon, CheckCircleIcon, MapPinIcon, FilePdfIcon } from "lucide-react";
 import { LocationCardProps } from "./LocationCard";
+import { jsPDF } from "jspdf";
 
 const ConfirmationPage = () => {
   const location = useLocation();
@@ -22,7 +23,6 @@ const ConfirmationPage = () => {
     appointmentDate,
     appointmentTime,
     scanLocation,
-    paymentAmount,
     bookingReference
   } = location.state || {};
   
@@ -31,12 +31,56 @@ const ConfirmationPage = () => {
     navigate("/");
     return null;
   }
+
+  const generatePDF = () => {
+    const doc = new jsPDF();
+    
+    // Add logo or header
+    doc.setFontSize(20);
+    doc.setTextColor(0, 0, 255);
+    doc.text("Universal Scan", 105, 15, { align: "center" });
+    
+    // Add booking details
+    doc.setFontSize(16);
+    doc.setTextColor(0, 0, 0);
+    doc.text("Booking Confirmation", 105, 30, { align: "center" });
+    
+    doc.setFontSize(12);
+    doc.text(`Reference: ${bookingReference}`, 20, 45);
+    doc.text(`Date: ${format(new Date(appointmentDate), "MMMM d, yyyy")}`, 20, 55);
+    doc.text(`Time: ${appointmentTime}`, 20, 65);
+    
+    // Patient details
+    doc.text("Patient Details:", 20, 80);
+    doc.text(`Name: ${formData.firstName} ${formData.lastName}`, 20, 90);
+    doc.text(`Email: ${formData.email}`, 20, 100);
+    doc.text(`Phone: ${formData.phone}`, 20, 110);
+    doc.text(`Age: ${formData.age}`, 20, 120);
+    doc.text(`Gender: ${formData.gender}`, 20, 130);
+    
+    // Location details
+    doc.text("Scan Center Details:", 20, 145);
+    doc.text(`Center: ${scanLocation.name}`, 20, 155);
+    doc.text(`Address: ${scanLocation.address}`, 20, 165);
+    doc.text(`City: ${scanLocation.city}`, 20, 175);
+    
+    // Important instructions
+    doc.setFontSize(11);
+    doc.text("Important Instructions:", 20, 195);
+    doc.text("1. Please arrive 15 minutes before your appointment time", 25, 205);
+    doc.text("2. Bring valid ID and doctor's referral", 25, 215);
+    doc.text("3. Follow pre-scan instructions sent to your email", 25, 225);
+    doc.text("4. For rescheduling, call: 1800-123-4567", 25, 235);
+    
+    // Save PDF
+    doc.save(`universal-scan-booking-${bookingReference}.pdf`);
+  };
   
   return (
     <div className="container mx-auto max-w-3xl px-4 py-8">
       <div className="text-center mb-8">
         <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
-          <CheckCircleIcon className="h-8 w-8 text-medical-green" />
+          <CheckCircleIcon className="h-8 w-8 text-green-600" />
         </div>
         <h1 className="text-3xl font-bold mb-2">Booking Confirmed!</h1>
         <p className="text-gray-600">
@@ -46,15 +90,20 @@ const ConfirmationPage = () => {
       </div>
       
       <Card className="mb-6">
-        <CardHeader className="bg-medical-blue/10">
+        <CardHeader className="bg-blue-50">
           <div className="flex justify-between items-start">
             <div>
               <CardTitle>Appointment Details</CardTitle>
               <CardDescription>Booking Reference: {bookingReference}</CardDescription>
             </div>
-            <Button variant="outline" size="sm" onClick={() => window.print()}>
-              <PrinterIcon className="h-4 w-4 mr-2" />
-              Print
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={generatePDF}
+              className="flex items-center gap-2"
+            >
+              <FilePdfIcon className="h-4 w-4" />
+              Download PDF
             </Button>
           </div>
         </CardHeader>
@@ -80,7 +129,7 @@ const ConfirmationPage = () => {
               <h3 className="text-sm font-medium text-gray-500 mb-2">Appointment Details</h3>
               <div className="bg-gray-50 p-4 rounded-md">
                 <div className="flex items-start">
-                  <CalendarIcon className="h-5 w-5 text-medical-blue mr-2 mt-0.5" />
+                  <CalendarIcon className="h-5 w-5 text-blue-600 mr-2 mt-0.5" />
                   <div>
                     <p className="font-medium">
                       {format(new Date(appointmentDate), "MMMM d, yyyy")}
@@ -90,7 +139,7 @@ const ConfirmationPage = () => {
                 </div>
                 
                 <div className="flex items-start mt-3">
-                  <MapPinIcon className="h-5 w-5 text-medical-blue mr-2 mt-0.5" />
+                  <MapPinIcon className="h-5 w-5 text-blue-600 mr-2 mt-0.5" />
                   <div>
                     <p className="font-medium">{scanLocation.name}</p>
                     <p className="text-sm text-gray-600">{scanLocation.address}</p>
@@ -99,54 +148,13 @@ const ConfirmationPage = () => {
                 </div>
               </div>
             </div>
-            
-            <div>
-              <h3 className="text-sm font-medium text-gray-500 mb-2">Payment Information</h3>
-              <div className="bg-gray-50 p-4 rounded-md">
-                <div className="flex justify-between mb-1">
-                  <span>PET Scan</span>
-                  <span>₹{scanLocation.price.toLocaleString()}</span>
-                </div>
-                <div className="flex justify-between text-sm text-gray-600">
-                  <span>Processing Fee</span>
-                  <span>₹200</span>
-                </div>
-                <div className="border-t mt-2 pt-2 flex justify-between font-medium">
-                  <span>Total Paid</span>
-                  <span>₹{paymentAmount.toLocaleString()}</span>
-                </div>
-              </div>
-            </div>
-            
-            <div>
-              <h3 className="text-sm font-medium text-gray-500 mb-2">Important Information</h3>
-              <div className="bg-gray-50 p-4 rounded-md">
-                <ul className="text-sm space-y-2">
-                  <li className="flex">
-                    <CheckCircleIcon className="h-4 w-4 text-medical-green mr-2 mt-0.5 shrink-0" />
-                    <span>Please arrive 15 minutes before your appointment time</span>
-                  </li>
-                  <li className="flex">
-                    <CheckCircleIcon className="h-4 w-4 text-medical-green mr-2 mt-0.5 shrink-0" />
-                    <span>Bring your valid ID, doctor's referral, and booking reference</span>
-                  </li>
-                  <li className="flex">
-                    <CheckCircleIcon className="h-4 w-4 text-medical-green mr-2 mt-0.5 shrink-0" />
-                    <span>Follow the pre-scan instructions sent to your email</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
           </div>
         </CardContent>
-        <CardFooter className="bg-gray-50 flex justify-between">
+        <CardFooter className="bg-gray-50">
           <div>
             <p className="text-sm text-gray-600">Need help?</p>
             <p className="text-sm font-medium">Call us at: 1800-123-4567</p>
           </div>
-          <Button onClick={() => navigate("/")}>
-            Return to Home
-          </Button>
         </CardFooter>
       </Card>
       

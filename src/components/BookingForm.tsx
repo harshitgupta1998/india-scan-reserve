@@ -77,16 +77,16 @@ const BookingForm = () => {
       return;
     }
 
-    // In a real app, this would be an API call
     toast.success("Appointment details saved!");
     
-    // Navigate to the payment page with form data and location info
-    navigate(`/payment`, { 
+    // Navigate directly to confirmation instead of payment
+    navigate(`/confirmation`, { 
       state: { 
         formData,
         appointmentDate: date,
         appointmentTime: timeSlot,
-        location
+        scanLocation: location,
+        bookingReference: `USC-${Math.random().toString(36).substring(2, 10).toUpperCase()}`
       } 
     });
   };
