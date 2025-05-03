@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -301,7 +300,7 @@ const BookingForm = () => {
               size="lg"
               disabled={!date || !timeSlot}
             >
-              Continue to Payment
+              Confirm Reservation
               <ChevronRightIcon className="ml-2 h-4 w-4" />
             </Button>
           </form>
