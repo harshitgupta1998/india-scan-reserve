@@ -15,7 +15,6 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { toast } from "sonner";
 import { useNavigate, useParams } from "react-router-dom";
 import { LocationCardProps } from "./LocationCard";
-import { locationsData } from "@/data/locations";
 import { Calendar } from "@/components/ui/calendar";
 import { format } from "date-fns";
 import {
@@ -25,16 +24,8 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { CalendarIcon, ChevronRightIcon, MapPinIcon } from "lucide-react";
-
-const timeSlots = [
-  "9:00 AM", 
-  "10:00 AM", 
-  "11:00 AM", 
-  "12:00 PM", 
-  "2:00 PM", 
-  "3:00 PM", 
-  "4:00 PM"
-];
+import { supabase } from "@/integrations/supabase/client";
+import { useQuery } from "@tanstack/react-query";
 
 const BookingForm = () => {
   const { locationId } = useParams();
@@ -42,6 +33,9 @@ const BookingForm = () => {
   const [location, setLocation] = useState<LocationCardProps | null>(null);
   const [date, setDate] = useState<Date | undefined>();
   const [timeSlot, setTimeSlot] = useState<string>("");
+  const [timeSlots, setTimeSlots] = useState<string[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -53,10 +47,40 @@ const BookingForm = () => {
     medicalHistory: "",
   });
   
+  // Fetch location data from Supabase
+  const { data: locationData, isLoading: isLocationLoading } = useQuery({
+    queryKey: ['location', locationId],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('scan_locations')
+        .select('*')
+        .eq('id', locationId)
+        .single();
+      
+      if (error) throw error;
+      return data;
+    },
+  });
+  
   useEffect(() => {
-    const foundLocation = locationsData.find(loc => loc.id === locationId) || null;
-    setLocation(foundLocation);
-  }, [locationId]);
+    if (locationData) {
+      setLocation({
+        id: locationData.id,
+        name: locationData.name,
+        city: locationData.city,
+        address: locationData.address,
+        price: locationData.price,
+        rating: 4.7, // Default rating since we don't have it in the database
+        availability: "High", // Default availability since we don't have it in the database
+        image: locationData.image_url
+      });
+      
+      // Set available time slots from location data
+      if (locationData.available_time_slots) {
+        setTimeSlots(locationData.available_time_slots);
+      }
+    }
+  }, [locationData]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -67,28 +91,70 @@ const BookingForm = () => {
     setFormData(prev => ({ ...prev, gender: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!date || !timeSlot) {
       toast.error("Please select a date and time");
       return;
     }
-
-    toast.success("Appointment details saved!");
     
+    setIsLoading(true);
+    
+    // Generate a booking reference
     const bookingReference = `USC-${Math.random().toString(36).substring(2, 10).toUpperCase()}`;
     
-    navigate("/confirmation", {
-      state: {
-        formData,
-        appointmentDate: date,
-        appointmentTime: timeSlot,
-        scanLocation: location,
-        bookingReference
-      }
-    });
+    try {
+      // Insert appointment into Supabase
+      const { data, error } = await supabase
+        .from('appointments')
+        .insert([
+          {
+            booking_reference: bookingReference,
+            first_name: formData.firstName,
+            last_name: formData.lastName,
+            email: formData.email,
+            phone: formData.phone,
+            age: parseInt(formData.age),
+            gender: formData.gender,
+            referring_doctor: formData.referringDoctor || null,
+            medical_history: formData.medicalHistory || null,
+            appointment_date: format(date, 'yyyy-MM-dd'),
+            appointment_time: timeSlot,
+            location_id: locationId
+          }
+        ])
+        .select();
+      
+      if (error) throw error;
+      
+      toast.success("Appointment successfully booked!");
+      
+      // Navigate to confirmation page
+      navigate("/confirmation", {
+        state: {
+          formData,
+          appointmentDate: date,
+          appointmentTime: timeSlot,
+          scanLocation: location,
+          bookingReference
+        }
+      });
+    } catch (error) {
+      console.error('Error booking appointment:', error);
+      toast.error("Failed to book appointment. Please try again.");
+    } finally {
+      setIsLoading(false);
+    }
   };
+
+  if (isLocationLoading) {
+    return (
+      <div className="container mx-auto py-12 text-center">
+        <h2 className="text-2xl font-semibold mb-4">Loading location details...</h2>
+      </div>
+    );
+  }
 
   if (!location) {
     return (
@@ -298,10 +364,10 @@ const BookingForm = () => {
               type="submit"
               className="w-full md:w-auto bg-medical-blue hover:bg-blue-600 text-lg"
               size="lg"
-              disabled={!date || !timeSlot}
+              disabled={!date || !timeSlot || isLoading}
             >
-              Confirm Reservation
-              <ChevronRightIcon className="ml-2 h-4 w-4" />
+              {isLoading ? "Booking..." : "Confirm Reservation"}
+              {!isLoading && <ChevronRightIcon className="ml-2 h-4 w-4" />}
             </Button>
           </form>
         </div>
@@ -347,7 +413,7 @@ const BookingForm = () => {
                 </div>
                 <div className="flex justify-between font-semibold text-lg mt-3 border-t pt-3">
                   <span>Total</span>
-                  <span className="text-medical-blue">₹{(location.price + 200).toLocaleString()}</span>
+                  <span className="text-medical-blue">₹{(Number(location.price) + 200).toLocaleString()}</span>
                 </div>
               </div>
             </CardContent>

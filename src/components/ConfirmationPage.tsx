@@ -13,6 +13,8 @@ import { format } from "date-fns";
 import { CalendarIcon, CheckCircleIcon, MapPinIcon, FileIcon, PrinterIcon } from "lucide-react";
 import { LocationCardProps } from "./LocationCard";
 import { jsPDF } from "jspdf";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 
 const ConfirmationPage = () => {
   const location = useLocation();
@@ -30,6 +32,26 @@ const ConfirmationPage = () => {
     navigate("/");
     return null;
   }
+
+  // Query to fetch appointment details if needed
+  const { data: appointmentData } = useQuery({
+    queryKey: ['appointment', bookingReference],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('appointments')
+        .select('*')
+        .eq('booking_reference', bookingReference)
+        .single();
+      
+      if (error) {
+        console.error('Error fetching appointment:', error);
+        return null;
+      }
+      
+      return data;
+    },
+    enabled: !!bookingReference,
+  });
 
   const generatePDF = () => {
     const doc = new jsPDF();
@@ -103,7 +125,7 @@ const ConfirmationPage = () => {
     doc.rect(0, 275, 210, 15, "F");
     doc.setTextColor(255, 255, 255);
     doc.setFontSize(10);
-    doc.text("Universal Scan - Mumbai's Premier PET Scan Centers", 105, 283, { align: "center" });
+    doc.text("Universal Scan - Premier PET Scan Centers", 105, 283, { align: "center" });
     
     doc.save(`universal-scan-reservation-${bookingReference}.pdf`);
   };

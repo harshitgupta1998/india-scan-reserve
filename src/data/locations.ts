@@ -1,6 +1,10 @@
 
+// This file is kept for backward compatibility
+// The app will now fetch locations data from Supabase
+
 import { LocationCardProps } from "@/components/LocationCard";
 
+// Fallback data in case of connection issues
 export const locationsData: LocationCardProps[] = [
   {
     id: "delhi-1",
@@ -83,3 +87,5 @@ export const locationsData: LocationCardProps[] = [
     image: "https://images.unsplash.com/photo-1477511801984-4ad318ed9846?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
   }
 ];
+
+export default locationsData;
