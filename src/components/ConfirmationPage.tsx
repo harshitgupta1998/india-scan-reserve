@@ -1,3 +1,4 @@
+
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -9,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { format } from "date-fns";
-import { CalendarIcon, CheckCircleIcon, MapPinIcon, FileIcon } from "lucide-react";
+import { CalendarIcon, CheckCircleIcon, MapPinIcon, FileIcon, PrinterIcon } from "lucide-react";
 import { LocationCardProps } from "./LocationCard";
 import { jsPDF } from "jspdf";
 
@@ -33,39 +34,82 @@ const ConfirmationPage = () => {
   const generatePDF = () => {
     const doc = new jsPDF();
     
-    doc.setFontSize(20);
-    doc.setTextColor(0, 0, 255);
+    // Add logo and styling
+    doc.setFillColor(0, 102, 204);
+    doc.rect(0, 0, 210, 25, "F");
+    
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(22);
     doc.text("Universal Scan", 105, 15, { align: "center" });
     
-    doc.setFontSize(16);
+    doc.setFontSize(18);
+    doc.setTextColor(0, 102, 204);
+    doc.text("Reservation Confirmation", 105, 35, { align: "center" });
+    
+    // Add reference number with background
+    doc.setFillColor(240, 247, 255);
+    doc.rect(20, 40, 170, 15, "F");
     doc.setTextColor(0, 0, 0);
-    doc.text("Booking Confirmation", 105, 30, { align: "center" });
+    doc.setFontSize(12);
+    doc.text(`Booking Reference: ${bookingReference}`, 105, 48, { align: "center" });
+    
+    // Add appointment details
+    doc.setFontSize(14);
+    doc.text("Appointment Details", 20, 65);
+    doc.line(20, 67, 190, 67);
     
     doc.setFontSize(12);
-    doc.text(`Reference: ${bookingReference}`, 20, 45);
-    doc.text(`Date: ${format(new Date(appointmentDate), "MMMM d, yyyy")}`, 20, 55);
-    doc.text(`Time: ${appointmentTime}`, 20, 65);
+    doc.text(`Date: ${format(new Date(appointmentDate), "MMMM d, yyyy")}`, 20, 75);
+    doc.text(`Time: ${appointmentTime}`, 20, 83);
     
-    doc.text("Patient Details:", 20, 80);
-    doc.text(`Name: ${formData.firstName} ${formData.lastName}`, 20, 90);
-    doc.text(`Email: ${formData.email}`, 20, 100);
-    doc.text(`Phone: ${formData.phone}`, 20, 110);
-    doc.text(`Age: ${formData.age}`, 20, 120);
-    doc.text(`Gender: ${formData.gender}`, 20, 130);
+    // Add patient details
+    doc.setFontSize(14);
+    doc.text("Patient Details", 20, 100);
+    doc.line(20, 102, 190, 102);
     
-    doc.text("Scan Center Details:", 20, 145);
-    doc.text(`Center: ${scanLocation.name}`, 20, 155);
-    doc.text(`Address: ${scanLocation.address}`, 20, 165);
-    doc.text(`City: ${scanLocation.city}`, 20, 175);
+    doc.setFontSize(12);
+    doc.text(`Name: ${formData.firstName} ${formData.lastName}`, 20, 110);
+    doc.text(`Email: ${formData.email}`, 20, 118);
+    doc.text(`Phone: ${formData.phone}`, 20, 126);
+    doc.text(`Age: ${formData.age}`, 20, 134);
+    doc.text(`Gender: ${formData.gender}`, 20, 142);
+    
+    // Add scan center details
+    doc.setFontSize(14);
+    doc.text("Scan Center Details", 20, 159);
+    doc.line(20, 161, 190, 161);
+    
+    doc.setFontSize(12);
+    doc.text(`Center: ${scanLocation.name}`, 20, 169);
+    doc.text(`Address: ${scanLocation.address}`, 20, 177);
+    doc.text(`City: ${scanLocation.city}`, 20, 185);
+    
+    // Add instructions
+    doc.setFillColor(240, 247, 255);
+    doc.rect(20, 195, 170, 55, "F");
+    doc.setFontSize(14);
+    doc.setTextColor(0, 102, 204);
+    doc.text("Important Instructions:", 105, 205, { align: "center" });
     
     doc.setFontSize(11);
-    doc.text("Important Instructions:", 20, 195);
-    doc.text("1. Please arrive 15 minutes before your appointment time", 25, 205);
-    doc.text("2. Bring valid ID and doctor's referral", 25, 215);
-    doc.text("3. Follow pre-scan instructions sent to your email", 25, 225);
-    doc.text("4. For rescheduling, call: 1800-123-4567", 25, 235);
+    doc.setTextColor(0, 0, 0);
+    doc.text("1. Please arrive 15 minutes before your appointment time", 30, 215);
+    doc.text("2. Bring valid ID and doctor's referral", 30, 225);
+    doc.text("3. Follow pre-scan instructions sent to your email", 30, 235);
+    doc.text("4. For rescheduling, call: 1800-123-4567", 30, 245);
     
-    doc.save(`universal-scan-booking-${bookingReference}.pdf`);
+    // Add footer
+    doc.setFillColor(0, 102, 204);
+    doc.rect(0, 275, 210, 15, "F");
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(10);
+    doc.text("Universal Scan - Mumbai's Premier PET Scan Centers", 105, 283, { align: "center" });
+    
+    doc.save(`universal-scan-reservation-${bookingReference}.pdf`);
+  };
+
+  const printConfirmation = () => {
+    window.print();
   };
   
   return (
@@ -74,7 +118,7 @@ const ConfirmationPage = () => {
         <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
           <CheckCircleIcon className="h-8 w-8 text-green-600" />
         </div>
-        <h1 className="text-3xl font-bold mb-2">Booking Confirmed!</h1>
+        <h1 className="text-3xl font-bold mb-2">Reservation Confirmed!</h1>
         <p className="text-gray-600">
           Your PET scan appointment has been successfully scheduled.
           A confirmation email has been sent to {formData.email}.
@@ -85,18 +129,29 @@ const ConfirmationPage = () => {
         <CardHeader className="bg-blue-50">
           <div className="flex justify-between items-start">
             <div>
-              <CardTitle>Appointment Details</CardTitle>
+              <CardTitle>Reservation Details</CardTitle>
               <CardDescription>Booking Reference: {bookingReference}</CardDescription>
             </div>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              onClick={generatePDF}
-              className="flex items-center gap-2"
-            >
-              <FileIcon className="h-4 w-4" />
-              Download PDF
-            </Button>
+            <div className="flex gap-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={printConfirmation}
+                className="flex items-center gap-2"
+              >
+                <PrinterIcon className="h-4 w-4" />
+                Print
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={generatePDF}
+                className="flex items-center gap-2"
+              >
+                <FileIcon className="h-4 w-4" />
+                Download PDF
+              </Button>
+            </div>
           </div>
         </CardHeader>
         <CardContent className="pt-6">
