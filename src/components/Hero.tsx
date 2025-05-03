@@ -13,7 +13,7 @@ const Hero = () => {
               <span className="text-medical-blue">Appointment Online</span>
             </h1>
             <p className="text-lg text-gray-600 mb-8">
-              Find and reserve PET scan appointments at top medical centers across India.
+              Find and reserve PET scan appointments at top medical centers across Mumbai.
               Quick booking, transparent pricing, and hassle-free experience.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
@@ -27,24 +27,11 @@ const Hero = () => {
             </div>
           </div>
           <div className="md:w-1/2">
-            <div className="bg-white p-4 rounded-xl shadow-lg relative">
-              <img
-                src="https://images.unsplash.com/photo-1581595219315-a187668e0531?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
-                alt="PET Scanner"
-                className="rounded-lg w-full h-72 object-cover"
-              />
-              <div className="absolute bottom-8 left-8 right-8 bg-white/90 backdrop-blur-sm p-3 rounded-lg">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm font-medium text-medical-blue">Advanced Technology</p>
-                    <p className="text-medical-dark font-semibold">State-of-the-art PET Scanners</p>
-                  </div>
-                  <div className="bg-medical-green/10 text-medical-green px-3 py-1 rounded-full text-sm font-medium">
-                    Available
-                  </div>
-                </div>
-              </div>
-            </div>
+            <img
+              src="https://images.unsplash.com/photo-1581595219315-a187668e0531?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80"
+              alt="PET Scanner"
+              className="rounded-lg w-full h-72 object-cover shadow-lg"
+            />
           </div>
         </div>
       </div>

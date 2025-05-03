@@ -11,7 +11,7 @@ const Navbar = () => {
           <span className="bg-medical-blue text-white p-2 rounded-md">
             <HomeIcon size={20} />
           </span>
-          <span className="text-xl font-bold text-medical-dark">IndiaScanReserve</span>
+          <span className="text-xl font-bold text-medical-dark">Universal Scan</span>
         </Link>
         
         <nav className="hidden md:flex items-center space-x-6">

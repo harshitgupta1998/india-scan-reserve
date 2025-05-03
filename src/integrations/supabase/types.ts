@@ -9,7 +9,99 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      appointments: {
+        Row: {
+          age: number
+          appointment_date: string
+          appointment_time: string
+          booking_reference: string
+          created_at: string | null
+          email: string
+          first_name: string
+          gender: string
+          id: string
+          last_name: string
+          location_id: string
+          medical_history: string | null
+          phone: string
+          referring_doctor: string | null
+          status: Database["public"]["Enums"]["appointment_status"] | null
+          updated_at: string | null
+          user_id: string | null
+        }
+        Insert: {
+          age: number
+          appointment_date: string
+          appointment_time: string
+          booking_reference: string
+          created_at?: string | null
+          email: string
+          first_name: string
+          gender: string
+          id?: string
+          last_name: string
+          location_id: string
+          medical_history?: string | null
+          phone: string
+          referring_doctor?: string | null
+          status?: Database["public"]["Enums"]["appointment_status"] | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          age?: number
+          appointment_date?: string
+          appointment_time?: string
+          booking_reference?: string
+          created_at?: string | null
+          email?: string
+          first_name?: string
+          gender?: string
+          id?: string
+          last_name?: string
+          location_id?: string
+          medical_history?: string | null
+          phone?: string
+          referring_doctor?: string | null
+          status?: Database["public"]["Enums"]["appointment_status"] | null
+          updated_at?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      scan_locations: {
+        Row: {
+          address: string
+          available_time_slots: string[] | null
+          city: string
+          created_at: string | null
+          id: string
+          image_url: string | null
+          name: string
+          price: number
+        }
+        Insert: {
+          address: string
+          available_time_slots?: string[] | null
+          city: string
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          name: string
+          price: number
+        }
+        Update: {
+          address?: string
+          available_time_slots?: string[] | null
+          city?: string
+          created_at?: string | null
+          id?: string
+          image_url?: string | null
+          name?: string
+          price?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -18,7 +110,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      appointment_status: "scheduled" | "completed" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -133,6 +225,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      appointment_status: ["scheduled", "completed", "cancelled"],
+    },
   },
 } as const
