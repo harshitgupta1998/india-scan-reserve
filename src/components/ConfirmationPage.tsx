@@ -1,4 +1,3 @@
-
 import { useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,7 +33,7 @@ const ConfirmationPage = () => {
   }
 
   // Query to fetch appointment details if needed
-  const { data: appointmentData } = useQuery({
+  const { data: appointmentData, isLoading } = useQuery({
     queryKey: ['appointment', bookingReference],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -133,6 +132,16 @@ const ConfirmationPage = () => {
   const printConfirmation = () => {
     window.print();
   };
+
+  // Use either the data passed through navigation state or the fetched data
+  const displayData = appointmentData || {
+    first_name: formData?.firstName,
+    last_name: formData?.lastName,
+    email: formData?.email,
+    phone: formData?.phone,
+    age: formData?.age,
+    gender: formData?.gender
+  };
   
   return (
     <div className="container mx-auto max-w-3xl px-4 py-8">
@@ -143,7 +152,7 @@ const ConfirmationPage = () => {
         <h1 className="text-3xl font-bold mb-2">Reservation Confirmed!</h1>
         <p className="text-gray-600">
           Your PET scan appointment has been successfully scheduled.
-          A confirmation email has been sent to {formData.email}.
+          A confirmation email has been sent to {displayData.email || formData?.email}.
         </p>
       </div>
       
@@ -181,15 +190,17 @@ const ConfirmationPage = () => {
             <div>
               <h3 className="text-sm font-medium text-gray-500 mb-2">Patient Information</h3>
               <div className="bg-gray-50 p-4 rounded-md">
-                <p className="font-medium">{formData.firstName} {formData.lastName}</p>
-                <p className="text-sm text-gray-600 mt-1">{formData.email}</p>
-                <p className="text-sm text-gray-600">{formData.phone}</p>
+                <p className="font-medium">
+                  {displayData.first_name || formData?.firstName} {displayData.last_name || formData?.lastName}
+                </p>
+                <p className="text-sm text-gray-600 mt-1">{displayData.email || formData?.email}</p>
+                <p className="text-sm text-gray-600">{displayData.phone || formData?.phone}</p>
                 <div className="mt-2 text-sm">
                   <span className="text-gray-500">Age: </span>
-                  <span>{formData.age}</span>
+                  <span>{displayData.age || formData?.age}</span>
                   <span className="mx-2">•</span>
                   <span className="text-gray-500">Gender: </span>
-                  <span className="capitalize">{formData.gender}</span>
+                  <span className="capitalize">{displayData.gender || formData?.gender}</span>
                 </div>
               </div>
             </div>
@@ -201,18 +212,19 @@ const ConfirmationPage = () => {
                   <CalendarIcon className="h-5 w-5 text-blue-600 mr-2 mt-0.5" />
                   <div>
                     <p className="font-medium">
-                      {format(new Date(appointmentDate), "MMMM d, yyyy")}
+                      {appointmentDate ? format(new Date(appointmentDate), "MMMM d, yyyy") : 
+                        (appointmentData?.appointment_date ? format(new Date(appointmentData.appointment_date), "MMMM d, yyyy") : "Date not available")}
                     </p>
-                    <p className="text-sm text-gray-600">{appointmentTime}</p>
+                    <p className="text-sm text-gray-600">{appointmentTime || appointmentData?.appointment_time || "Time not available"}</p>
                   </div>
                 </div>
                 
                 <div className="flex items-start mt-3">
                   <MapPinIcon className="h-5 w-5 text-blue-600 mr-2 mt-0.5" />
                   <div>
-                    <p className="font-medium">{scanLocation.name}</p>
-                    <p className="text-sm text-gray-600">{scanLocation.address}</p>
-                    <p className="text-sm text-gray-600">{scanLocation.city}</p>
+                    <p className="font-medium">{scanLocation?.name || "Center information not available"}</p>
+                    <p className="text-sm text-gray-600">{scanLocation?.address || ""}</p>
+                    <p className="text-sm text-gray-600">{scanLocation?.city || ""}</p>
                   </div>
                 </div>
               </div>

@@ -126,7 +126,10 @@ const BookingForm = () => {
         ])
         .select();
       
-      if (error) throw error;
+      if (error) {
+        console.error('Error details:', error);
+        throw error;
+      }
       
       toast.success("Appointment successfully booked!");
       
