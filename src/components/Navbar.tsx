@@ -1,7 +1,6 @@
 
 import { Link } from 'react-router-dom';
-import { Button } from "@/components/ui/button";
-import { HomeIcon, MapPinIcon, CalendarIcon, CreditCardIcon } from 'lucide-react';
+import { HomeIcon } from 'lucide-react';
 
 const Navbar = () => {
   return (
@@ -14,7 +13,7 @@ const Navbar = () => {
           <span className="text-xl font-bold text-medical-dark">Universal Scan</span>
         </Link>
         
-        <nav className="hidden md:flex items-center space-x-6">
+        <nav className="flex items-center space-x-6">
           <Link to="/" className="text-medical-dark hover:text-medical-blue transition-colors">
             Home
           </Link>
@@ -28,17 +27,6 @@ const Navbar = () => {
             FAQs
           </Link>
         </nav>
-        
-        <div className="flex items-center space-x-2">
-          <Button variant="outline" className="hidden md:flex">
-            <MapPinIcon size={18} className="mr-1" />
-            Find Centers
-          </Button>
-          <Button className="bg-medical-blue hover:bg-blue-600">
-            <CalendarIcon size={18} className="mr-1" /> 
-            Book Now
-          </Button>
-        </div>
       </div>
     </header>
   );

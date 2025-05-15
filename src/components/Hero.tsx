@@ -1,5 +1,4 @@
 
-import { Button } from "@/components/ui/button";
 import { MapPinIcon } from "lucide-react";
 
 const Hero = () => {
@@ -16,15 +15,6 @@ const Hero = () => {
               Find and reserve PET scan appointments at top medical centers across Mumbai.
               Quick booking, transparent pricing, and hassle-free experience.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Button size="lg" className="bg-medical-blue hover:bg-blue-600 text-lg">
-                Book Appointment
-              </Button>
-              <Button size="lg" variant="outline" className="text-lg">
-                <MapPinIcon className="mr-2 h-5 w-5" />
-                Browse Locations
-              </Button>
-            </div>
           </div>
           <div className="md:w-1/2">
             <img
